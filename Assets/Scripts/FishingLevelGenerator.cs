@@ -31,6 +31,13 @@ public class FishingLevelGenerator : MonoBehaviour
 
     public void GenerateLevel()
     {
+        // remove all hooks
+        foreach (FishingHook hook in hooks)
+        {
+            Destroy(hook.gameObject);
+        }
+        hooks.Clear();
+
         int fishCount = level % fishRarityIncrease == 0 ? minFishCount : minFishCount + (level % fishRarityIncrease);
 
         Debug.Log("Fish count: " + fishCount);

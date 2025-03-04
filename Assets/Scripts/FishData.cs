@@ -9,7 +9,8 @@ public class FishData : ScriptableObject
     // Optional: Get the fish's name from the asset filename
     public string FishName => name;
     public float speed = 1.0f;
+    public int score = 1;
     public Fish FishDataToFish() {
-        return new Fish(name, health, speed, icon);
+        return new Fish(name, health, speed, icon, score);
     }
 }

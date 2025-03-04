@@ -2,10 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.Events;
 
 public class FishingManager : MonoBehaviour
 {
     public static FishingManager instance;
+
+    public enum GameState
+    {
+        DEFAULT,
+        FISHING,
+        GAME_OVER
+    }
+
+    public GameState gameState = GameState.DEFAULT;
+
     public GameObject fishingUI;
     public Image indicator;
     public Transform pulseMover;
@@ -23,25 +35,56 @@ public class FishingManager : MonoBehaviour
     public int reelAtk = 1;
     public float rodRadius = .3f;
     public bool isFishing = false;
+    public Fish hookedFish;
 
+    // End and start
+    public UnityEvent onGameEnd;
+    public UnityEvent onGameStart;
 
 
     void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         instance = this;
+    }
+
+    public void InitializeGame()
+    {
+        TimeManager.instance.ResetTimer();
+        TimeManager.instance.StartTimer();
+        levelGenerator.GenerateLevel();
+
+        reelAtk = InventoryManager.instance.GetLevel("reel");
+        lineHealth = InventoryManager.instance.GetLevel("line");
+        rodRadius = .3f + InventoryManager.instance.GetLevel("rod") * .15f;
+
+        onGameStart?.Invoke();
     }
 
     void Start()
     {
-        levelGenerator.GenerateLevel();
+        TimeManager.instance.onTimeEnd.AddListener(GameOver);
+
+        InitializeGame();
+    }
+
+    private void OnDestroy()
+    {
+        TimeManager.instance.onTimeEnd.RemoveListener(GameOver);
     }
 
     public void InitializeFishing(FishingHook hook)
     {
-        Fish fish = hook.fish;
-        fishImage.sprite = fish.icon;
-        fishHealth = fish.health;
-        pulseSpeed = fish.speed;
+        hookedFish = hook.fish;
+        fishImage.sprite = hookedFish.icon;
+        fishHealth = hookedFish.health;
+        pulseSpeed = hookedFish.speed;
+
 
 
         // set random pulse target
@@ -66,9 +109,25 @@ public class FishingManager : MonoBehaviour
 
     public void StartFishing()
     {
+        gameState = GameState.FISHING;
         isFishing = true;
         fishingUI.SetActive(true);
     }
+
+    public void StopFishing()
+    {
+        gameState = GameState.DEFAULT;
+        isFishing = false;
+        fishingUI.SetActive(false);
+    }
+
+    void GameOver()
+    {
+        StopFishing();
+
+        onGameEnd?.Invoke();
+    }
+
 
     void Update()
     {
@@ -111,13 +170,17 @@ public class FishingManager : MonoBehaviour
                     if (fishHealth <= 0)
                     {
                         Debug.Log("You reeled in the fish!");
+                        StopFishing();
+                        ScoreManager.instance.AddScore(hookedFish.score);
+
+                        hookedFish = null;
+
                         if (levelGenerator.hooks.Count == 0)
                         {
                             levelGenerator.LevelPassed();
                             levelGenerator.GenerateLevel();
+                            TimeManager.instance.LevelCleared();
                         }
-                        isFishing = false;
-                        fishingUI.SetActive(false);
                     }
                 }
                 else
@@ -127,10 +190,12 @@ public class FishingManager : MonoBehaviour
                     if (lineHealth <= 0)
                     {
                         Debug.Log("Line is broken!");
-                        isFishing = false;
-                        fishingUI.SetActive(false);
+
+                        GameOver();
                     }
                 }
+
+
             }
         }
 

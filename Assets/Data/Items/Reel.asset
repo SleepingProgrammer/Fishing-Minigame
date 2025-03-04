@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6737aba2fc04e54782db416ea287360, type: 3}
+  m_Name: Reel
+  m_EditorClassIdentifier: 
+  displays:
+  - icon: {fileID: 572108770, guid: 75f28e54dc1446c4cbd6c28b10765311, type: 3}
+    price: 0
+  - icon: {fileID: -1370022588, guid: 75f28e54dc1446c4cbd6c28b10765311, type: 3}
+    price: 100
+  - icon: {fileID: -1720515067, guid: 75f28e54dc1446c4cbd6c28b10765311, type: 3}
+    price: 500
+  itemName: Reel
+  itemDescription: Reduces hits required to reel in a fish
+  itemKey: REEL
