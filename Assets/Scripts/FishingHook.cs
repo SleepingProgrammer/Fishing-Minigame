@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FishingHook : MonoBehaviour
-{ 
+{  
     public Fish fish;
-
+    
     private void OnMouseDown() {
         Debug.Log("Hook clicked");
-        FishingManager.instance.InitializeFishing(this);
         Destroy(gameObject);
     }
 }
