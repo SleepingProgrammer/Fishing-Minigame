@@ -23,6 +23,41 @@ public class LevelManager : MonoBehaviour
         hooks.Clear();
     }
 
+    public void LevelPassed()
+    {
+        level++;
+
+        //Check if we are about to increase rarity
+        if (level % fishRarityInc == 0)
+        {
+            // Make sure we don't go over the fish data count
+            if (fishRarity < fishData.Count)
+                fishRarity++;
+        }
+
+        GenerateLevel();
+    }
+
+    public void RemoveHook(FishingHook hook)
+    {
+        hooks.Remove(hook);
+        Destroy(hook.gameObject);
+    }
+
+    public void HideHooks() {
+        foreach (FishingHook hook in hooks)
+        {
+            hook.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowHooks() {
+        foreach (FishingHook hook in hooks)
+        {
+            hook.gameObject.SetActive(true);
+        }
+    }
+
 
     public void GenerateLevel()
     {
@@ -64,7 +99,8 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    public void ResetGame() {
+    public void ResetGame()
+    {
         level = 0;
         fishRarity = 0;
         GenerateLevel();

@@ -8,6 +8,7 @@ public class FishingHook : MonoBehaviour
     
     private void OnMouseDown() {
         Debug.Log("Hook clicked");
+        FishingManager.instance.OnFishHooked(this);
         Destroy(gameObject);
     }
 }
