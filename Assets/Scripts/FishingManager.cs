@@ -73,9 +73,18 @@ public class FishingManager : MonoBehaviour
         }
     }
 
+    public void LoadItemConfigs() {
+        reelAtk = InventoryManager.instance.GetLevel("REEL");
+        lineHealth = InventoryManager.instance.GetLevel("LINE");
+        hitRadius = .3f + InventoryManager.instance.GetLevel("ROD") * .15f;
+
+    }
+
     public void InitializeGame()
     {
         levelManager.level = 0;
+
+        LoadItemConfigs();
 
         // TODO: Reset Time
         // TODO: START TIMER
