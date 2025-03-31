@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class FishingManager : MonoBehaviour
 {
@@ -26,6 +27,10 @@ public class FishingManager : MonoBehaviour
     public float maxPulseScale = 2f;
     public float minPulseScale = 1f;
 
+    // events
+    public UnityEvent OnGameStart;
+    public UnityEvent OnGameEnd;
+
     // Attributes
     public int fishHealth;
     public int lineHealth;
@@ -40,6 +45,11 @@ public class FishingManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+    }
+
+    void Start()
+    {
+        
         InitializeGame();
     }
 
@@ -92,6 +102,8 @@ public class FishingManager : MonoBehaviour
 
         // Initialize healthbars for line
         LoadLineHealthBars();
+
+        OnGameStart?.Invoke();
     }
 
     // Function to load hook data
@@ -136,7 +148,8 @@ public class FishingManager : MonoBehaviour
         DamageFish(reelAtk);
 
         if (fishHealth <= 0)
-        {            // TODO: Increase score
+        {            
+            ScoreManager.instance.score += hookedFish.score;
             StopFishing();
 
             hookedFish = null;
@@ -183,6 +196,9 @@ public class FishingManager : MonoBehaviour
         StopFishing();
 
         Debug.Log("Game Over");
+
+        // We use ?. to only call the function if it is not null
+        OnGameEnd?.Invoke();
     }
 
     void MissedStrike()
