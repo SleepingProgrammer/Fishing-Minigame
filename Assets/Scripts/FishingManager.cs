@@ -49,8 +49,22 @@ public class FishingManager : MonoBehaviour
 
     void Start()
     {
-        
-        InitializeGame();
+         
+        TimeManager.instance.OnTimeEnd.AddListener(GameOver);
+    }
+
+    void OnDestroy()
+    {
+        TimeManager.instance.OnTimeEnd.RemoveListener(GameOver);
+    }
+
+    public void ResetData() {
+        // Clear player prefs
+        PlayerPrefs.DeleteAll();
+    }
+
+    public void ExitGame() {
+        Application.Quit();
     }
 
     public void LoadLineHealthBars()
@@ -96,9 +110,12 @@ public class FishingManager : MonoBehaviour
 
         LoadItemConfigs();
 
-        // TODO: Reset Time
-        // TODO: START TIMER
-        // TODO: RESET LEVEL MANAGER
+        TimeManager.instance.ResetTimer();
+        TimeManager.instance.StartTimer();
+        levelManager.ResetGame();
+
+    
+ 
 
         // Initialize healthbars for line
         LoadLineHealthBars();
@@ -112,6 +129,7 @@ public class FishingManager : MonoBehaviour
         hookedFish = fishingHook.fish;
         fishPreviewImg.sprite = hookedFish.icon;
         fishHealth = hookedFish.health;
+        pulseSpeed = hookedFish.speed;
         LoadFishHealthBars();
 
         float randomScale = Random.Range(minPulseScale, maxPulseScale);
@@ -157,6 +175,7 @@ public class FishingManager : MonoBehaviour
             if (levelManager.hooks.Count == 0)
             {
                 levelManager.LevelPassed();
+                TimeManager.instance.LevelBonus();
             }
         }
     }

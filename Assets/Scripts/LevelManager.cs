@@ -101,15 +101,13 @@ public class LevelManager : MonoBehaviour
 
     public void ResetGame()
     {
+        
+        ClearHooks();
         level = 0;
         fishRarity = 0;
         GenerateLevel();
     }
-
-    void Start()
-    {
-        ResetGame();
-    }
+ 
 
 
     Vector2 GetRandomPointInFishingArea()
